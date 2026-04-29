@@ -19,7 +19,7 @@ st.markdown("""
 
 st.title("Culvert SET Calculator")
 st.markdown(
-    "<div class='note-box'>Only type in the green boxes. Grey values calculate automatically.</div>",
+    "<div class='note-box'>Testing Phase</div>",
     unsafe_allow_html=True
 )
 
