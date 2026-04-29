@@ -15,18 +15,20 @@ margin-bottom:14px;
 font-weight:600;
 }
 </style>
-""",unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
 st.title("Culvert SET Calculator")
 st.markdown(
-"<div class='note-box'>Enter Pipe Size, Cover, and Slope Ratio. Note: 9 inches cover minimum may apply by standard, but lower values can be entered for calculation.</div>",
-unsafe_allow_html=True
+    "<div class='note-box'>Enter Pipe Size, Cover, and Slope Ratio. Note: 9 inches cover minimum may apply by standard, but lower values can be entered for calculation.</div>",
+    unsafe_allow_html=True
 )
 
-left,right=st.columns([1,2.6])
+left, right = st.columns([1, 2.6])
 
 with left:
-    pipe=st.number_input(
+    st.subheader("Input Boxes")
+
+    pipe = st.number_input(
         "PIPE SIZE (inches)",
         min_value=1.0,
         value=18.0,
@@ -34,7 +36,7 @@ with left:
         format="%.0f"
     )
 
-    cover=st.number_input(
+    cover = st.number_input(
         "COVER (inches)",
         min_value=0.0,
         value=9.0,
@@ -43,7 +45,7 @@ with left:
         help='9" may be a design minimum, but calculator allows any value.'
     )
 
-    ratio=st.number_input(
+    ratio = st.number_input(
         "SLOPE RATIO",
         min_value=0.1,
         value=4.0,
@@ -51,107 +53,126 @@ with left:
         format="%.2f"
     )
 
-size_cover=pipe+cover
-set_length=(size_cover*ratio)/12
-pipe_dia_plus_12=pipe+12
+size_cover = pipe + cover
+set_length = (size_cover * ratio) / 12
+pipe_dia_plus_12 = pipe + 12
 
 with right:
-    a,b=st.columns([1,1.45])
+    a, b = st.columns([1, 1.45])
 
     with a:
         st.subheader("Calculation Table")
         st.markdown(f"""
-<table style='width:100%;border-collapse:collapse;text-align:center;font-weight:800'>
-<tr style='background:#e6d88f'>
+<table style='width:100%;border-collapse:collapse;text-align:center;font-weight:800;font-size:19px;'>
+<tr style='background:#ded191;color:#222;'>
 <td style='padding:14px;border:1px solid #888'>PIPE</td>
 <td style='padding:14px;border:1px solid #888'>COVER</td>
 <td style='padding:14px;border:1px solid #888'>SIZE + COVER</td>
 </tr>
 
 <tr>
-<td style='background:#b8d2b4;padding:24px;border:1px solid #888'>{pipe:.0f}</td>
-<td style='background:#b8d2b4;padding:24px;border:1px solid #888'>{cover:.0f}</td>
-<td style='background:#d9d9d9;padding:24px;border:1px solid #888'>{size_cover:.0f}</td>
+<td style='background:#b7ccb3;color:#263526;padding:24px;border:1px solid #888;font-size:24px'>{pipe:.0f}</td>
+<td style='background:#b7ccb3;color:#263526;padding:24px;border:1px solid #888;font-size:24px'>{cover:.0f}</td>
+<td style='background:#dddddd;color:#333;padding:24px;border:1px solid #888;font-size:24px'>{size_cover:.0f}</td>
 </tr>
 
-<tr style='background:#b8d1d8'>
+<tr style='background:#bad0d6;color:#222;'>
 <td style='padding:14px;border:1px solid #888'>RATIO</td>
 <td style='padding:14px;border:1px solid #888'>SET LENGTH</td>
-<td style='padding:14px;border:1px solid #888'>PIPE DIA +12"</td>
+<td style='padding:14px;border:1px solid #888'>PIPE DIA +12&quot;</td>
 </tr>
 
 <tr>
-<td style='background:#b8d2b4;padding:24px;border:1px solid #888'>{ratio:.2f}:1</td>
-<td style='background:#eee;color:red;padding:24px;border:1px solid #888'>{set_length:.2f}</td>
-<td style='background:#eee;color:red;padding:24px;border:1px solid #888'>{pipe_dia_plus_12:.0f}</td>
+<td style='background:#b7ccb3;color:#263526;padding:24px;border:1px solid #888;font-size:24px'>{ratio:.2f}:1</td>
+<td style='background:#eeeeee;color:#b82121;padding:24px;border:1px solid #888;font-size:24px'>{set_length:.2f}</td>
+<td style='background:#eeeeee;color:#b82121;padding:24px;border:1px solid #888;font-size:24px'>{pipe_dia_plus_12:.0f}</td>
 </tr>
 </table>
-""",unsafe_allow_html=True)
+""", unsafe_allow_html=True)
 
     with b:
         st.subheader("Dynamic Illustration")
-        fig,ax=plt.subplots(figsize=(12.5,3.7))
+
+        fig, ax = plt.subplots(figsize=(12.5, 3.7))
         ax.set_facecolor("white")
+        fig.patch.set_facecolor("white")
 
-        x0=1
-        y0=2.25
-        x1=7.6
-        y1=1.15
-        x2=x1+1.75
+        x0 = 1
+        y0 = 2.25
+        x1 = 7.6
+        y1 = 1.15
+        x2 = x1 + 1.75
 
-        ax.set_xticks([i*.75 for i in range(18)])
-        ax.set_yticks([i*.35 for i in range(9)])
-        ax.grid(True,color="#dedede")
+        # No grid lines in the illustration.
 
-        ax.plot([x0-.12,x0+.12],[1.95,2.65],
-                color='red',linestyle='--')
+        ax.plot([x0 - .12, x0 + .12], [1.95, 2.65],
+                color="#d71920", linestyle="--", lw=1.4)
 
-        ax.plot([x0,x1],[y0,y1],color='black',lw=2.6)
+        ax.plot([x0, x1], [y0, y1], color="black", lw=3.0)
 
         ax.add_patch(Rectangle(
-            ((x0+x1)/2-.55,y0-.20),
-            1.1,.32,
-            facecolor="#d9d9d9"
+            ((x0 + x1) / 2 - .70, y0 - .23),
+            1.4, .40,
+            facecolor="#dddddd",
+            edgecolor="none"
         ))
 
-        ax.text((x0+x1)/2,y0-.04,
+        ax.text((x0 + x1) / 2, y0 - .035,
                 f"{set_length:.2f}",
-                color='red',
-                ha='center')
+                color="#d71920",
+                fontsize=18,
+                fontweight="bold",
+                ha="center",
+                va="center")
 
-        ax.text((x0+x1)/2,
-                y1-.02,
+        ax.text((x0 + x1) / 2,
+                y1 - .05,
                 "SLOPE DISTANCE FEET.",
-                ha='center')
+                fontsize=16,
+                ha="center",
+                va="top",
+                color="black")
 
-        ax.plot([x1,x2],[y1,y1],color='red',lw=3)
-        ax.plot([x2,x2],[y1,.25],color='red',lw=3)
+        ax.plot([x1, x2], [y1, y1], color="#d71920", lw=3.8)
+        ax.plot([x2, x2], [y1, .25], color="#d71920", lw=3.8)
 
-        ax.text((x1+x2)/2,y1-.28,
+        ax.text((x1 + x2) / 2, y1 - .32,
                 f'{pipe_dia_plus_12:.0f}"',
-                color='red',
-                ha='center')
+                color="#d71920",
+                fontsize=17,
+                fontweight="bold",
+                ha="center")
 
-        ax.text((x1+x2)/2,y1-.58,
+        ax.text((x1 + x2) / 2, y1 - .70,
                 "Flat Spot",
-                ha='center')
+                fontsize=16,
+                ha="center",
+                color="black")
 
-        ax.text(x2+.45,y1-.03,
-        "UPSTREAM TOE DOWN 3 FEET\nDOWNSTREAM TOE DOWN 2 FEET",
-        ha='left')
+        ax.text(x2 + .45, y1 - .03,
+                "UPSTREAM TOE DOWN 3 FEET\nDOWNSTREAM TOE DOWN 2 FEET",
+                fontsize=16,
+                ha="left",
+                va="center",
+                color="black")
 
-        ax.text(x0+.12,y0+.38,
-                f"SLOPE {ratio:.2f}:1")
+        ax.text(x0 + .12, y0 + .42,
+                f"SLOPE {ratio:.2f}:1",
+                fontsize=15,
+                ha="left",
+                color="black")
 
-        ax.set_xlim(.25,13)
-        ax.set_ylim(0,2.9)
-        ax.tick_params(left=False,bottom=False,
-                       labelleft=False,labelbottom=False)
+        ax.set_xlim(.25, 13)
+        ax.set_ylim(0, 2.9)
+        ax.tick_params(left=False, bottom=False,
+                       labelleft=False, labelbottom=False)
 
         for s in ax.spines.values():
             s.set_visible(False)
 
-        st.pyplot(fig)
+        st.pyplot(fig, clear_figure=True)
 
 st.markdown("---")
+st.write(f"Size + Cover = {pipe:.0f} + {cover:.0f} = {size_cover:.0f} inches")
 st.write(f"SET Length = ({size_cover:.0f} × {ratio:.2f}) ÷ 12 = {set_length:.2f} ft")
+st.write(f"Pipe Diameter + 12 inches = {pipe:.0f} + 12 = {pipe_dia_plus_12:.0f} inches")
