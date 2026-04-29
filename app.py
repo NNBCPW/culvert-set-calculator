@@ -13,7 +13,33 @@ border-left:6px solid #7ca982;
 padding:12px 16px;
 margin-bottom:14px;
 font-weight:600;
+color:#222;
 }
+.value-table{
+width:100%;
+border-collapse:collapse;
+text-align:center;
+font-family:Arial, sans-serif;
+color:#111;
+}
+.value-table td{
+border:1px solid #111;
+padding:8px 10px;
+font-weight:400;
+}
+.label-row td{
+font-size:20px;
+line-height:1.15;
+}
+.value-row td{
+font-size:30px;
+line-height:1.15;
+}
+.grey{background:#d9d9d9;}
+.green{background:#dbe8c3;}
+.blue{background:#dce6f1;}
+.white{background:#ffffff;}
+.spacer{height:28px;}
 </style>
 """, unsafe_allow_html=True)
 
@@ -58,34 +84,39 @@ set_length = (size_cover * ratio) / 12
 pipe_dia_plus_12 = pipe + 12
 
 with right:
-    a, b = st.columns([1, 1.45])
+    a, b = st.columns([1.1, 1.35])
 
     with a:
-        st.subheader("Calculation Table")
+        st.subheader("Calculation Boxes")
+
         st.markdown(f"""
-<table style='width:100%;border-collapse:collapse;text-align:center;font-weight:800;font-size:19px;'>
-<tr style='background:#ded191;color:#222;'>
-<td style='padding:14px;border:1px solid #888'>PIPE</td>
-<td style='padding:14px;border:1px solid #888'>COVER</td>
-<td style='padding:14px;border:1px solid #888'>SIZE + COVER</td>
+<table class="value-table">
+<tr class="label-row">
+<td class="grey">PIPE SIZE</td>
+<td class="grey">COVER</td>
+<td class="grey">RATIO</td>
 </tr>
-
-<tr>
-<td style='background:#b7ccb3;color:#263526;padding:24px;border:1px solid #888;font-size:24px'>{pipe:.0f}</td>
-<td style='background:#b7ccb3;color:#263526;padding:24px;border:1px solid #888;font-size:24px'>{cover:.0f}</td>
-<td style='background:#dddddd;color:#333;padding:24px;border:1px solid #888;font-size:24px'>{size_cover:.0f}</td>
+<tr class="value-row">
+<td class="grey">{pipe:.0f} INCHES</td>
+<td class="grey">{cover:.0f} INCHES</td>
+<td class="grey">{ratio:.2f}:1</td>
 </tr>
+</table>
 
-<tr style='background:#bad0d6;color:#222;'>
-<td style='padding:14px;border:1px solid #888'>RATIO</td>
-<td style='padding:14px;border:1px solid #888'>SET LENGTH</td>
-<td style='padding:14px;border:1px solid #888'>PIPE DIA +12&quot;</td>
+<div class="spacer"></div>
+
+<table class="value-table">
+<tr class="label-row">
+<td class="green">SET SLOPE LENGTH</td>
+<td class="blue">FLAT SPOT (PIPE SIZE<br>+ 12 INCHES)</td>
+<td class="grey">TOE DOWN<br>UPSTREAM</td>
+<td class="grey">TOE DOWN<br>DOWNSTREAM</td>
 </tr>
-
-<tr>
-<td style='background:#b7ccb3;color:#263526;padding:24px;border:1px solid #888;font-size:24px'>{ratio:.2f}:1</td>
-<td style='background:#eeeeee;color:#b82121;padding:24px;border:1px solid #888;font-size:24px'>{set_length:.2f}</td>
-<td style='background:#eeeeee;color:#b82121;padding:24px;border:1px solid #888;font-size:24px'>{pipe_dia_plus_12:.0f}</td>
+<tr class="value-row">
+<td class="green">{set_length:.0f} FEET</td>
+<td class="blue">{pipe_dia_plus_12:.0f} INCHES</td>
+<td class="grey">3 FEET</td>
+<td class="grey">2 FEET</td>
 </tr>
 </table>
 """, unsafe_allow_html=True)
@@ -102,8 +133,6 @@ with right:
         x1 = 7.6
         y1 = 1.15
         x2 = x1 + 1.75
-
-        # No grid lines in the illustration.
 
         ax.plot([x0 - .12, x0 + .12], [1.95, 2.65],
                 color="#d71920", linestyle="--", lw=1.4)
