@@ -8,24 +8,29 @@ st.markdown("""
 <style>
 .block-container {max-width:1450px;padding-top:1rem;}
 .note-box {
-background:#f3f3f3;border-left:6px solid #7ca982;padding:12px 16px;
-margin-bottom:14px;color:#1f1f1f;font-weight:600;}
-.formula-box {
-background:#f6f6f6;border:1px solid #cfcfcf;border-radius:10px;
-padding:14px 18px;color:#1f1f1f;}
+  background:#f3f3f3;
+  border-left:6px solid #7ca982;
+  padding:12px 16px;
+  margin-bottom:14px;
+  color:#1f1f1f;
+  font-weight:600;
+}
 </style>
 """, unsafe_allow_html=True)
 
 st.title("Culvert SET Calculator")
-st.markdown("<div class='note-box'>Only type in the green input boxes. Grey values calculate automatically.</div>", unsafe_allow_html=True)
+st.markdown(
+    "<div class='note-box'>Only type in the green boxes. Grey values calculate automatically.</div>",
+    unsafe_allow_html=True
+)
 
-left, right = st.columns([1, 2.5])
+left, right = st.columns([1, 2.6])
 
 with left:
     st.subheader("Green Input Boxes")
-    pipe = st.number_input("PIPE SIZE in inches", min_value=12.0, max_value=120.0, value=15.0, step=1.0, format="%.0f")
-    ratio = st.selectbox("SLOPE RATIO, 4:1 or 6:1", options=[4.0, 6.0], index=1, format_func=lambda x: f"{int(x)}:1")
-    st.caption("Cover is fixed at 6 inches, matching the spreadsheet example.")
+    pipe = st.number_input("PIPE SIZE in inches", min_value=12.0, max_value=120.0, value=20.0, step=1.0, format="%.0f")
+    ratio = st.selectbox("SLOPE RATIO", options=[4.0, 6.0], index=0, format_func=lambda x: f"{int(x)}:1")
+    st.caption("Cover is fixed at 6 inches.")
 
 cover = 6.0
 size_cover = pipe + cover
@@ -33,98 +38,133 @@ set_length = (size_cover * ratio) / 12.0
 pipe_dia_plus_12 = pipe + 12.0
 
 with right:
-    table_col, drawing_col = st.columns([1.05, 1.45])
+    table_col, drawing_col = st.columns([1.0, 1.45])
 
     with table_col:
         st.subheader("Calculation Table")
         st.markdown(f"""
 <table style="width:100%;border-collapse:collapse;text-align:center;font-weight:800;font-size:18px;">
 <tr style="background:#e6d88f;color:#111;">
-<td style="padding:15px;border:1px solid #888;">PIPE</td>
-<td style="padding:15px;border:1px solid #888;">COVER</td>
-<td style="padding:15px;border:1px solid #888;">SIZE + COVER</td>
+<td style="padding:14px;border:1px solid #888;">PIPE</td>
+<td style="padding:14px;border:1px solid #888;">COVER</td>
+<td style="padding:14px;border:1px solid #888;">SIZE + COVER</td>
 </tr>
 <tr>
-<td style="background:#b8d2b4;color:#111;padding:26px;border:1px solid #888;font-size:24px;">{pipe:.0f}</td>
-<td style="background:#d9d9d9;color:#111;padding:26px;border:1px solid #888;font-size:24px;">{cover:.0f}</td>
-<td style="background:#d9d9d9;color:#111;padding:26px;border:1px solid #888;font-size:24px;">{size_cover:.0f}</td>
+<td style="background:#b8d2b4;color:#111;padding:24px;border:1px solid #888;font-size:24px;">{pipe:.0f}</td>
+<td style="background:#d9d9d9;color:#111;padding:24px;border:1px solid #888;font-size:24px;">{cover:.0f}</td>
+<td style="background:#d9d9d9;color:#111;padding:24px;border:1px solid #888;font-size:24px;">{size_cover:.0f}</td>
 </tr>
 <tr style="background:#b8d1d8;color:#111;">
-<td style="padding:15px;border:1px solid #888;">{ratio:.0f}:1</td>
-<td style="padding:15px;border:1px solid #888;">SET LENGTH</td>
-<td style="padding:15px;border:1px solid #888;">PIPE DIA + 12&quot;</td>
+<td style="padding:14px;border:1px solid #888;">{ratio:.0f}:1</td>
+<td style="padding:14px;border:1px solid #888;">SET LENGTH</td>
+<td style="padding:14px;border:1px solid #888;">PIPE DIA + 12&quot;</td>
 </tr>
 <tr>
-<td style="background:#b8d2b4;color:#111;padding:26px;border:1px solid #888;font-size:24px;">{ratio:.2f}</td>
-<td style="background:#eeeeee;color:#d51919;padding:26px;border:1px solid #888;font-size:24px;">{set_length:.2f}</td>
-<td style="background:#eeeeee;color:#d51919;padding:26px;border:1px solid #888;font-size:24px;">{pipe_dia_plus_12:.0f}</td>
+<td style="background:#b8d2b4;color:#111;padding:24px;border:1px solid #888;font-size:24px;">{ratio:.2f}</td>
+<td style="background:#eeeeee;color:#d71920;padding:24px;border:1px solid #888;font-size:24px;">{set_length:.2f}</td>
+<td style="background:#eeeeee;color:#d71920;padding:24px;border:1px solid #888;font-size:24px;">{pipe_dia_plus_12:.0f}</td>
 </tr>
 </table>
 """, unsafe_allow_html=True)
 
     with drawing_col:
         st.subheader("Dynamic Illustration")
-        fig, ax = plt.subplots(figsize=(12, 4.7))
+
+        fig, ax = plt.subplots(figsize=(12.8, 4.7))
         fig.patch.set_facecolor("white")
         ax.set_facecolor("white")
 
-        x_start = 0.0
-        x_set_end = max(set_length, 4.0)
-        x_flat_start = x_set_end + 0.25
-        x_flat_end = x_flat_start + 2.45
-        x_callout = x_flat_end + 0.25
-        x_culvert = x_callout + 4.25
+        # Layout coordinates.  The set length is shown as text, while the
+        # geometry remains readable for all pipe sizes.
+        x0 = 1.5
+        y0 = 2.15
+        x_end = 8.0
+        y_end = 0.45
+        x_flat_end = 9.85
+        box_x = 9.95
+        box_y = 0.15
+        box_w = 3.0
+        box_h = 0.9
 
-        y_top = 2.05
-        y_bottom = 0.10
+        # Left slope label and arrow, matching the spreadsheet style.
+        ax.text(0.15, 2.65, "SLOPE", fontsize=12, fontweight="bold", ha="left")
+        ax.text(0.52, 2.36, f"{ratio:.2f}", fontsize=11, ha="left")
+        ax.annotate("", xy=(x0 - 0.12, y0 - 0.04), xytext=(0.95, 2.38),
+                    arrowprops=dict(arrowstyle="-|>", color="black", lw=1.5))
 
-        ax.plot([x_start, x_set_end], [y_top, y_bottom], color="black", linewidth=2.5)
-        ax.plot([x_start, x_set_end], [y_top - 0.18, y_bottom - 0.18], color="#d71920", linewidth=1.6)
-        ax.plot([1.4, x_flat_start], [0, 0], color="black", linewidth=2.5)
+        # Red dashed end guides.
+        ax.plot([x0 - 0.1, x0 + 0.25], [1.65, 2.75], color="#d71920", lw=1.1, linestyle="--")
+        ax.plot([x_end - 0.06, x_end + 0.2], [-0.05, 0.95], color="#d71920", lw=1.1, linestyle="--")
 
-        ax.plot([x_start - 0.35, x_start - 0.05], [y_top - 0.65, y_top + 0.38], color="#d71920", linewidth=1.2, linestyle="--")
-        ax.plot([x_set_end - 0.05, x_set_end + 0.25], [y_bottom - 0.55, y_bottom + 0.45], color="#d71920", linewidth=1.2, linestyle="--")
+        # Slope lines: black top and red construction line under it.
+        ax.plot([x0, x_end], [y0, y_end], color="black", lw=2.8)
+        ax.plot([x0 + 0.06, x_end], [y0 - 0.18, y_end - 0.18], color="#d71920", lw=1.7)
 
-        ax.annotate("", xy=(x_start + 0.05, y_top + 0.35), xytext=(x_set_end - 0.05, y_bottom + 0.35), arrowprops=dict(arrowstyle="<->", color="#d71920", lw=1.5))
-        ax.text(x_set_end / 2, 0.38, f"{set_length:.2f}", ha="center", va="bottom", color="#d71920", fontsize=12, fontweight="bold")
-        ax.text(x_set_end / 2, -0.05, "FEET", ha="center", va="top", color="black", fontsize=10)
+        # Main horizontal baseline.
+        ax.plot([x0, x_end], [0.20, 0.20], color="black", lw=2.5)
 
-        ax.plot([x_flat_start, x_flat_end], [0, 0], color="#d71920", linewidth=3)
-        ax.plot([x_flat_start, x_flat_start], [-0.45, 0.45], color="#d71920", linewidth=2)
-        ax.plot([x_flat_end, x_flat_end], [-0.45, 0.45], color="#d71920", linewidth=2)
-        ax.annotate("", xy=(x_flat_start + 0.05, -0.55), xytext=(x_flat_end - 0.05, -0.55), arrowprops=dict(arrowstyle="<->", color="#d71920", lw=1.5))
-        ax.text((x_flat_start + x_flat_end) / 2, -0.98, f"{pipe_dia_plus_12:.0f}\nINCHES", ha="center", va="top", color="#d71920", fontsize=11, fontweight="bold")
+        # Slope distance label below the baseline.
+        ax.text((x0 + x_end) / 2, -0.05, "SLOPE DISTANCE FEET.", fontsize=11, ha="center")
 
-        callout = Rectangle((x_callout, -0.15), 3.25, 0.95, facecolor="#fff27a", edgecolor="#d71920", linewidth=1.6, linestyle="--")
-        ax.add_patch(callout)
-        ax.text(x_callout + 1.62, 0.32, "UPSTREAM 3'\nDOWNSTREAM 2'", ha="center", va="center", color="#111", fontsize=11, fontweight="bold")
+        # Red dimension arrow parallel to the slope.
+        ax.annotate("", xy=(x_end - 0.08, y_end + 0.02), xytext=(x0 + 0.1, y0 - 0.12),
+                    arrowprops=dict(arrowstyle="<->", color="#d71920", lw=1.5))
+        ax.text((x0 + x_end) / 2, 0.52, f"{set_length:.2f}", color="#d71920",
+                fontsize=12, fontweight="bold", ha="center")
 
-        ax.annotate("", xy=(x_culvert - 0.45, 0.18), xytext=(x_callout + 3.25, 0.18), arrowprops=dict(arrowstyle="->", color="#c44", lw=1.3))
+        # Pipe diameter plus 12 inch section.
+        ax.add_patch(Rectangle((x_end, 0.2), x_flat_end - x_end, 0.48,
+                               facecolor="#d9d9d9", edgecolor="none"))
+        ax.plot([x_end, x_flat_end], [0.68, 0.68], color="#d71920", lw=3)
+        ax.plot([x_end, x_end], [0.10, 0.96], color="#d71920", lw=2)
+        ax.plot([x_flat_end, x_flat_end], [0.10, 0.96], color="#d71920", lw=2)
+        ax.annotate("", xy=(x_end + 0.05, 0.05), xytext=(x_flat_end - 0.05, 0.05),
+                    arrowprops=dict(arrowstyle="<->", color="#d71920", lw=1.4))
+        ax.text((x_end + x_flat_end) / 2, 0.82, f"{pipe_dia_plus_12:.0f}",
+                color="#d71920", fontsize=12, fontweight="bold", ha="center")
+        ax.text((x_end + x_flat_end) / 2, 0.30, "INCHES",
+                color="black", fontsize=10, ha="center")
+        ax.text(x_end + 0.05, -0.38, "FLAT\nSPOT",
+                color="#d71920", fontsize=11, fontweight="bold", ha="left")
 
-        culvert_body = Polygon([(x_culvert, -0.55), (x_culvert + 1.15, -0.95), (x_culvert + 1.15, -0.05), (x_culvert, 0.35)], closed=True, fill=False, edgecolor="#c44", linewidth=2.2)
-        ax.add_patch(culvert_body)
-        ax.plot([x_culvert - 0.9, x_culvert], [0.35, 0.05], color="#c44", linewidth=2.2)
-        ax.plot([x_culvert - 0.9, x_culvert], [0.70, 0.40], color="#c44", linewidth=2.2)
-        ax.plot([x_culvert + 1.15, x_culvert + 1.9], [0.15, 0.43], color="#c44", linewidth=2.2)
-        ax.plot([x_culvert + 0.38, x_culvert + 1.05], [-0.15, 0.10], color="#c44", linewidth=2.0)
+        # Upstream/downstream yellow callout.
+        ax.add_patch(Rectangle((box_x, box_y), box_w, box_h,
+                               facecolor="#fff27a", edgecolor="#d71920",
+                               linewidth=1.7, linestyle="--"))
+        ax.text(box_x + box_w/2, box_y + box_h/2, "UPSTREAM 3'\nDOWNSTREAM 2'",
+                fontsize=11, fontweight="bold", ha="center", va="center", color="black")
 
-        ax.text(x_culvert + 2.15, 0.62, "TOE DOWN\nUPSTREAM 3'\nDOWNSTREAM 2'", ha="left", va="center", color="#d71920", fontsize=11, fontweight="bold")
-        ax.text(x_start - 0.1, y_top + 0.42, "6:1 - 4:1", ha="left", va="bottom", color="black", fontsize=11, fontweight="bold")
-        ax.text(x_start + 0.35, y_top + 0.1, f"{ratio:.2f}", ha="left", va="bottom", color="black", fontsize=11)
-        ax.text(x_culvert - 2.25, -1.25, "PIPE DIA\n+ 12", ha="center", va="top", color="#d71920", fontsize=11, fontweight="bold")
+        # Right vertical dimension by callout.
+        ax.plot([box_x + box_w + 0.25, box_x + box_w + 0.25], [box_y, box_y + box_h],
+                color="#d71920", lw=1.5)
+        ax.annotate("", xy=(box_x + box_w + 0.25, box_y + 0.03),
+                    xytext=(box_x + box_w + 0.25, box_y + box_h - 0.03),
+                    arrowprops=dict(arrowstyle="<->", color="#d71920", lw=1.2))
 
-        ax.set_xlim(-0.8, x_culvert + 5.0)
-        ax.set_ylim(-2.0, 3.0)
+        # Toe down block / headwall sketch, closer to the spreadsheet reference.
+        toe_x = box_x + box_w + 1.15
+        toe_y = 0.28
+        block = Polygon([
+            (toe_x, toe_y + 0.45),
+            (toe_x + 0.65, toe_y + 0.15),
+            (toe_x + 0.65, toe_y - 0.75),
+            (toe_x, toe_y - 0.45)
+        ], closed=True, fill=False, edgecolor="#c44", linewidth=2.2)
+        ax.add_patch(block)
+        ax.plot([toe_x - 1.2, toe_x], [toe_y + 0.75, toe_y + 0.45], color="#c44", lw=2.2)
+        ax.plot([toe_x - 1.2, toe_x], [toe_y + 0.55, toe_y + 0.25], color="#c44", lw=2.2)
+        ax.plot([toe_x + 0.65, toe_x + 1.35], [toe_y + 0.10, toe_y + 0.45], color="#c44", lw=2.2)
+        ax.plot([toe_x + 0.25, toe_x + 0.65], [toe_y - 0.10, toe_y + 0.10], color="#c44", lw=2.0)
+
+        ax.text(toe_x + 1.65, toe_y + 0.55, "TOE DOWN\nUPSTREAM 3'\nDOWNSTREAM 2'",
+                color="#d71920", fontsize=11, fontweight="bold", ha="left", va="center")
+
+        ax.set_xlim(-0.2, toe_x + 5.4)
+        ax.set_ylim(-1.15, 3.1)
         ax.axis("off")
         st.pyplot(fig, clear_figure=True)
 
 st.markdown("---")
-st.markdown(f"""
-<div class='formula-box'>
-<b>Formulas</b><br>
-Size + Cover = Pipe Diameter + 6 inches<br>
-SET Length = (Size + Cover × Slope Ratio) ÷ 12<br>
-Pipe Diameter + 12 inches = Pipe Diameter + 12 inches<br><br>
-Current result: <b>{pipe:.0f}</b> inch pipe + <b>12</b> inches = <b>{pipe_dia_plus_12:.0f}</b> inches
-</div>
-""", unsafe_allow_html=True)
+st.write("Size + Cover = Pipe Diameter + 6 inches")
+st.write("SET Length = (Size + Cover × Slope Ratio) ÷ 12")
+st.write("Pipe Diameter + 12 inches = Pipe Diameter + 12 inches")
