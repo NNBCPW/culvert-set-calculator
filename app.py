@@ -113,6 +113,5 @@ st.markdown("**Formulas**")
 st.write("Size + Cover = Pipe + 6")
 st.write("SET Length = (Size + Cover × Ratio) ÷ 12")
 st.write("Flat Spot = Pipe + 12")
-```
 
 
