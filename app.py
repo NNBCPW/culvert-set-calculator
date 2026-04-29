@@ -50,7 +50,7 @@ with right:
 <tr style="background:#b8d1d8;color:#111;">
 <td style="padding:14px;border:1px solid #999">{ratio:.0f}:1</td>
 <td style="padding:14px;border:1px solid #999">SET LENGTH</td>
-<td style="padding:14px;border:1px solid #999">DIA+12</td>
+<td style="padding:14px;border:1px solid #999">DIA+12"</td>
 </tr>
 <tr>
 <td style="background:#b8d2b4;color:#111;padding:24px;border:1px solid #999">{ratio:.2f}</td>
@@ -58,4 +58,4 @@ with right:
 <td style="background:#ececec;color:#d51919;padding:24px;border:1px solid #999">{flat_spot:.0f}</td>
 </tr>
 </table>
-st.write('Flat Spot = Pipe + 12 Inches)
+st.write('Flat Spot = Pipe + 12")
