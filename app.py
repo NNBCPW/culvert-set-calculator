@@ -1,6 +1,3 @@
-
-
-```python
 import streamlit as st
 import matplotlib.pyplot as plt
 import numpy as np
@@ -118,16 +115,4 @@ st.write("SET Length = (Size + Cover × Ratio) ÷ 12")
 st.write("Flat Spot = Pipe + 12")
 ```
 
-One note: there is one tiny typo in the code above from formatting: find this line:
 
-```python
- y1=2
-```
-
-and remove the extra **n** so it becomes:
-
-```python
-y1=2
-```
-
-Then commit to GitHub and Streamlit will redeploy.
